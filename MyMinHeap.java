@@ -1,64 +1,77 @@
+// MyMinHeap is a custom implementation of the min-heap data structure
 public class MyMinHeap<T extends Comparable<T>> {
-    private final MyArrayList<T> heap = new MyArrayList<>();
+    private MyArrayList<T> list;
+
+    public MyMinHeap() {
+        list = new MyArrayList<>();
+    }
 
     public void insert(T item) {
-        heap.addLast(item);
-        heapifyUp(heap.size() - 1);
+        list.add(item);
+        heapifyUp();
     }
 
     public T extractMin() {
-        if (heap.size() == 0) throw new RuntimeException("Heap is empty");
-        T min = heap.get(0);
-        T last = heap.get(heap.size() - 1);
-        heap.set(0, last);
-        heap.removeLast();
-        heapifyDown(0);
+        if (isEmpty()) throw new NoSuchElementException();
+        T min = list.get(0);
+        list.set(0, list.getLast());
+        list.removeLast();
+        heapifyDown();
         return min;
     }
 
-    public T peek() {
-        if (heap.size() == 0) throw new RuntimeException("Heap is empty");
-        return heap.get(0);
-    }
-
-    public int size() {
-        return heap.size();
+    public T peekMin() {
+        if (isEmpty()) throw new NoSuchElementException();
+        return list.get(0);
     }
 
     public boolean isEmpty() {
-        return heap.size() == 0;
+        return list.size() == 0;
     }
 
-    private void heapifyUp(int index) {
+    public int size() {
+        return list.size();
+    }
+
+    // Helper method to maintain heap property while inserting
+    private void heapifyUp() {
+        int index = list.size() - 1;
         while (index > 0) {
-            int parent = (index - 1) / 2;
-            if (heap.get(index).compareTo(heap.get(parent)) < 0) {
-                swap(index, parent);
-                index = parent;
-            } else break;
+            int parentIndex = (index - 1) / 2;
+            if (list.get(index).compareTo(list.get(parentIndex)) < 0) {
+                swap(index, parentIndex);
+                index = parentIndex;
+            } else {
+                break;
+            }
         }
     }
 
-    private void heapifyDown(int index) {
-        int size = heap.size();
-        while (index < size) {
-            int left = 2 * index + 1;
-            int right = 2 * index + 2;
-            int smallest = index;
+    // Helper method to maintain heap property while extracting the min
+    private void heapifyDown() {
+        int index = 0;
+        while (index * 2 + 1 < list.size()) {
+            int leftChildIndex = index * 2 + 1;
+            int rightChildIndex = index * 2 + 2;
+            int smallerChildIndex = leftChildIndex;
 
-            if (left < size && heap.get(left).compareTo(heap.get(smallest)) < 0) smallest = left;
-            if (right < size && heap.get(right).compareTo(heap.get(smallest)) < 0) smallest = right;
+            if (rightChildIndex < list.size() && list.get(rightChildIndex).compareTo(list.get(leftChildIndex)) < 0) {
+                smallerChildIndex = rightChildIndex;
+            }
 
-            if (smallest != index) {
-                swap(index, smallest);
-                index = smallest;
-            } else break;
+            if (list.get(index).compareTo(list.get(smallerChildIndex)) > 0) {
+                swap(index, smallerChildIndex);
+                index = smallerChildIndex;
+            } else {
+                break;
+            }
         }
     }
 
+    // Helper method to swap elements
     private void swap(int i, int j) {
-        T temp = heap.get(i);
-        heap.set(i, heap.get(j));
-        heap.set(j, temp);
+        T temp = list.get(i);
+        list.set(i, list.get(j));
+        list.set(j, temp);
     }
 }
