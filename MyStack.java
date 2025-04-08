@@ -1,19 +1,24 @@
+// MyStack is a custom implementation of the stack data structure
 public class MyStack<T extends Comparable<T>> {
-    private final MyArrayList<T> list = new MyArrayList<>();
+    private MyArrayList<T> list;
+
+    public MyStack() {
+        list = new MyArrayList<>();
+    }
 
     public void push(T item) {
-        list.addLast(item);
+        list.add(item);
     }
 
     public T pop() {
-        if (isEmpty()) throw new RuntimeException("Stack is empty");
+        if (isEmpty()) throw new EmptyStackException();
         T item = list.getLast();
         list.removeLast();
         return item;
     }
 
     public T peek() {
-        if (isEmpty()) throw new RuntimeException("Stack is empty");
+        if (isEmpty()) throw new EmptyStackException();
         return list.getLast();
     }
 
